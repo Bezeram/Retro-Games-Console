@@ -46,7 +46,6 @@ void loop() {
     unsigned long waitForFPSTime = targetDelay - frameTime;
     delay(waitForFPSTime);
   }
-
 }
 
 void handleGames(float deltaTime) {

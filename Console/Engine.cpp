@@ -37,6 +37,16 @@ void Engine :: updateLoop(float deltaTime) {
 	inputX = remap(analogRead(xPin), 0, 1023, -1, 1);
 	inputY = remap(analogRead(yPin), 0, 1023, -1, 1);
 
+	// Convert into display coordinates:
+	{
+		int temp = inputX;
+		inputX = inputY;
+		inputY = temp;
+
+		inputX *= -1;
+		inputY *= -1;
+	}
+
 	if (abs(inputX) < inputThreshold) {
 		inputX = 0;
 	}
@@ -86,10 +96,10 @@ void Engine :: setPixelToValue(int x, int y, bool on) {
 		// x -> y
 		// y -> x
 		if (on) {
-			rowsDisplayRight[x-8] |= 1 << y;
+			rowsDisplayRight[y] |= 1 << (x-8);
 		}
 		else {
-			rowsDisplayRight[x-8] &= ~(1 << y);
+			rowsDisplayRight[y] &= ~(1 << (x-8));
 		}
 	}
 	else {
@@ -98,10 +108,10 @@ void Engine :: setPixelToValue(int x, int y, bool on) {
 		// x -> -y
 		// y -> -x
 		if (on) {
-			rowsDisplayLeft[7 - x] |= 1 << (7 - y);
+			rowsDisplayLeft[7-y] |= 1 << (7-x);
 		}
 		else {
-			rowsDisplayLeft[7 - x] &= ~(1 << (7 - y));
+			rowsDisplayLeft[7-y] &= ~(1 << (7-x));
 		}
 	}
 }
