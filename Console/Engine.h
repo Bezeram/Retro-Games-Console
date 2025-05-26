@@ -15,19 +15,19 @@ private:
 	const int buzzerPin = 12;
 	
 	// Display pins:
-	const int dinPinA = 9;
-	const int csPinA = 8;
-	const int clkPinA = 10;
+	const int dinPinRight = 9;
+	const int csPinRight = 8;
+	const int clkPinRight = 10;
 
-	const int dinPinB = 7;
-	const int csPinB = 5;
-	const int clkPinB = 6;
+	const int dinPinLeft = 7;
+	const int csPinLeft = 5;
+	const int clkPinLeft = 6;
 
-	LedControl ledControllerA = LedControl(dinPinA,clkPinA,csPinA,1); // (DIN, CLK, CS, num displays
-	LedControl ledControllerB = LedControl(dinPinB,clkPinB,csPinB,1); // (DIN, CLK, CS, num displays
+	LedControl ledControllerLeft = LedControl(dinPinLeft,clkPinLeft,csPinLeft,1); // (DIN, CLK, CS, num displays
+	LedControl ledControllerRight = LedControl(dinPinRight,clkPinRight,csPinRight,1); // (DIN, CLK, CS, num displays
 
-	unsigned char rowsDisplayA[8];
-	unsigned char rowsDisplayB[8];
+	unsigned char rowsDisplayLeft[8];
+	unsigned char rowsDisplayRight[8];
 	int buttonState;
 
 	float remap(float, float, float, float, float);

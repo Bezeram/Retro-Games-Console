@@ -4,8 +4,8 @@
 #include "src/Game.h"
 
 Engine :: Engine() {
-	ledControllerA.shutdown(0, false);
-	ledControllerB.shutdown(0, false);
+	ledControllerLeft.shutdown(0, false);
+	ledControllerRight.shutdown(0, false);
 
 	pinMode(buttonPin, INPUT);
   	pinMode(buzzerPin, OUTPUT);
@@ -37,12 +37,6 @@ void Engine :: updateLoop(float deltaTime) {
 	inputX = remap(analogRead(xPin), 0, 1023, -1, 1);
 	inputY = remap(analogRead(yPin), 0, 1023, -1, 1);
 
-  Serial.print("X: ");
-  Serial.print(inputX);
-  Serial.print(" Y: ");
-  Serial.print(inputY);
-  Serial.print("\n");
-
 	if (abs(inputX) < inputThreshold) {
 		inputX = 0;
 	}
@@ -58,23 +52,23 @@ void Engine :: playSound(int frequency, int duration) {
 
 void Engine :: clearScreen() {
  	for (int i = 0; i < 8; i ++) {
-      rowsDisplayA[i] = 0;
-      rowsDisplayB[i] = 0;
+      rowsDisplayRight[i] = 0;
+      rowsDisplayLeft[i] = 0;
  	}
 }
 
 void Engine :: drawToDisplay() {
 	for (int row = 0; row < 8; row ++) {
-		ledControllerA.setRow(0, row, rowsDisplayA[row]);
-		ledControllerB.setRow(0, row, rowsDisplayB[row]);
+		ledControllerRight.setRow(0, row, rowsDisplayRight[row]);
+		ledControllerLeft.setRow(0, row, rowsDisplayLeft[row]);
  	}
 }
 
 
 // set display brightness [0,15]
 void Engine :: setDisplayBrightness(int brightness) {
-	ledControllerA.setIntensity(0, brightness);
-  ledControllerB.setIntensity(0, brightness);
+	ledControllerRight.setIntensity(0, brightness);
+  ledControllerLeft.setIntensity(0, brightness);
 }
 
 void Engine :: setPixel(int x, int y) {
@@ -87,19 +81,27 @@ void Engine :: setPixelToValue(int x, int y, bool on) {
 	}
 
 	if (x >= 8) {
+		// x apartine [8, 15]
+		// y apartine [0, 7]
+		// x -> y
+		// y -> x
 		if (on) {
-			rowsDisplayA[x-8] |= 1 << y;
+			rowsDisplayRight[x-8] |= 1 << y;
 		}
 		else {
-			rowsDisplayA[x-8] &= ~(1 << y);
+			rowsDisplayRight[x-8] &= ~(1 << y);
 		}
 	}
 	else {
+		// x apartine [0, 7]
+		// y apartine [0, 7]
+		// x -> -y
+		// y -> -x
 		if (on) {
-			rowsDisplayB[x] |= 1 << y;
+			rowsDisplayLeft[7 - x] |= 1 << (7 - y);
 		}
 		else {
-			rowsDisplayB[x] &= ~(1 << y);
+			rowsDisplayLeft[7 - x] &= ~(1 << (7 - y));
 		}
 	}
 }

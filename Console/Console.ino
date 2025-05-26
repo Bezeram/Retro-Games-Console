@@ -3,7 +3,7 @@
 #include "src/SpaceGame.h"
 #include "src/Game.h";
 
-const bool showStartupSequence = true;
+const bool showStartupSequence = false;
 const int numGames = 2;
 
 int activeGameIndex = 0;
