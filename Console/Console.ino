@@ -52,7 +52,7 @@ void handleGames(float deltaTime) {
   game->updateLoop(engine);
 
   const float switchGameButtonHoldTime = 0.75;
-  if (engine.buttonUpThisFrame && engine.buttonDownDuration > switchGameButtonHoldTime) {
+  if (engine.buttonJoystickUpThisFrame && engine.buttonJoystickDownDuration > switchGameButtonHoldTime) {
     switchGame();
   }
 }

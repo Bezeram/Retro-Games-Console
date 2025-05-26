@@ -2,12 +2,12 @@
 #include <Arduino.h>
 #include <LedControl.h>
 
-
 class Engine {
 private:
 
 	// Input pins:
 	const int buttonPin = 2;
+	const int buttonJoystickPin = 4;
 	const int xPin = 0;
 	const int yPin = 1;
 
@@ -29,6 +29,7 @@ private:
 	unsigned char rowsDisplayLeft[8];
 	unsigned char rowsDisplayRight[8];
 	int buttonState;
+	int buttonJoystickState;
 
 	float remap(float, float, float, float, float);
 
@@ -43,6 +44,12 @@ public:
 	bool buttonUpThisFrame;
 	bool buttonDownThisFrame;
 	float buttonDownDuration;
+
+	// Player input info:
+	bool buttonJoystickDown;
+	bool buttonJoystickUpThisFrame;
+	bool buttonJoystickDownThisFrame;
+	float buttonJoystickDownDuration;
 
 
 	Engine();

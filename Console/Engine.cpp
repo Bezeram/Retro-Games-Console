@@ -8,29 +8,44 @@ Engine :: Engine() {
 	ledControllerRight.shutdown(0, false);
 
 	pinMode(buttonPin, INPUT);
-  	pinMode(buzzerPin, OUTPUT);
+	pinMode(buttonJoystickPin, INPUT_PULLUP);
+	pinMode(buzzerPin, OUTPUT);
 
-  	clearScreen();
-  	time = 0;
+	clearScreen();
+	time = 0;
 }
 
 void Engine :: updateLoop(float deltaTime) {
 	this->deltaTime = deltaTime;
 	time += deltaTime;
 
-	// Button input:
+	// Module Button input:
 	int buttonStateOld = buttonState;
 	buttonState = digitalRead(buttonPin);
 	buttonDown = buttonState == 1;
-  	buttonDownThisFrame = buttonDown && buttonState != buttonStateOld;
-  	buttonUpThisFrame = buttonState == 0 && buttonStateOld == 1;
+	buttonDownThisFrame = buttonDown && buttonState != buttonStateOld;
+	buttonUpThisFrame = buttonState == 0 && buttonStateOld == 1;
 
-  	if (buttonDownThisFrame) {
-  		buttonDownDuration = 0;
-  	}
-  	if (buttonDown) {
-  		buttonDownDuration += deltaTime;
-  	}
+	if (buttonDownThisFrame) {
+		buttonDownDuration = 0;
+	}
+	if (buttonDown) {
+		buttonDownDuration += deltaTime;
+	}
+
+	// Joystick button input:
+	int buttonJoystickStateOld = buttonJoystickState;
+	buttonJoystickState = digitalRead(buttonJoystickPin);
+	buttonJoystickDown = buttonJoystickState == 0;
+	buttonJoystickDownThisFrame = buttonJoystickDown == 0 && buttonJoystickStateOld == 1;
+	buttonJoystickUpThisFrame = buttonJoystickState == 1 && buttonJoystickStateOld == 0;
+
+	if (buttonJoystickDownThisFrame) {
+		buttonJoystickDownDuration = 0;
+	}
+	if (buttonJoystickDown) {
+		buttonJoystickDownDuration += deltaTime;
+	}
 
 	// Get analog stick input:
 	const float inputThreshold = 0.1;
@@ -77,7 +92,7 @@ void Engine :: drawToDisplay() {
 
 // set display brightness [0,15]
 void Engine :: setDisplayBrightness(int brightness) {
-	ledControllerRight.setIntensity(0, brightness);
+ledControllerRight.setIntensity(0, brightness);
   ledControllerLeft.setIntensity(0, brightness);
 }
 
@@ -90,11 +105,16 @@ void Engine :: setPixelToValue(int x, int y, bool on) {
 		return;
 	}
 
+	// This code assumes that the left display is rotated 90 degrees clockwise
+	// and the right display is rotated 90 degrees counter-clockwise.
+	// As such, we must perform some coordinate transformations.
+	//
+	// The "virtual" system of axis we want to achieve is 
+	// origin at the bottom left corner of the left display,
+	// +x going right, +y going up.
 	if (x >= 8) {
-		// x apartine [8, 15]
-		// y apartine [0, 7]
-		// x -> y
-		// y -> x
+		// x in [8, 15]
+		// y in [0, 7]
 		if (on) {
 			rowsDisplayRight[y] |= 1 << (x-8);
 		}
@@ -103,10 +123,8 @@ void Engine :: setPixelToValue(int x, int y, bool on) {
 		}
 	}
 	else {
-		// x apartine [0, 7]
-		// y apartine [0, 7]
-		// x -> -y
-		// y -> -x
+		// x in [0, 7]
+		// y in [0, 7]
 		if (on) {
 			rowsDisplayLeft[7-y] |= 1 << (7-x);
 		}
